@@ -1,0 +1,34 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html,
+body,
+#app,
+.wrapper {
+	width: 100%;
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: scroll;
+}
+
+.content {
+	width: 100%;
+	height: 100%;
+	padding: 10px;
+	overflow-y: scroll;
+	box-sizing: border-box;
+}
+
+.content-collapse {
+	left: 65px;
+}
+
+.container {
+	padding: 30px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+}
+

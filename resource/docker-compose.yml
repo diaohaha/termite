@@ -1,0 +1,184 @@
+version: '3.7'
+services:
+  serv:
+    image: github.com/diaohaha/termite:20200109_02_gd
+    env_file:
+      - env
+    network_mode: "host"
+    networks:
+      hostnet: {}
+    hostname: "{{.Service.Name}}-{{.Task.Slot}}"
+    environment:
+      - _TIMEZONE=${CI_ENVIRONMENT_TIMEZONE:-Asia/Shanghai}
+      - SERVICE_NAME={{.Service.Name}}
+      - INSTANCE_ID={{.Task.Slot}}
+      - SERVICE_TYPE=MAIN
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/service_data:/data/service/data:rw"
+      - "/data/logs:/data/service/logs:rw"
+    command:
+      - startup
+      - "./termite_server"
+    deploy:
+      mode: global
+      restart_policy:
+        condition: any
+      update_config:
+        order: stop-first
+        parallelism: 1
+        delay: 10s
+
+  http:
+    image: github.com/diaohaha/termite:20200109_02_gd
+    env_file:
+      - env
+    networks:
+      - infra
+    hostname: "{{.Service.Name}}-{{.Task.Slot}}"
+    environment:
+      - _TIMEZONE=${CI_ENVIRONMENT_TIMEZONE:-Asia/Shanghai}
+      - SERVICE_NAME={{.Service.Name}}
+      - INSTANCE_ID={{.Task.Slot}}
+      - SERVICE_TYPE=MAIN
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/service_data:/data/service/data:rw"
+      - "/data/logs:/data/service/logs:rw"
+    command:
+      - startup
+      - "./termite_http"
+    ports:
+      - "10023:10023"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      update_config:
+        order: stop-first
+        parallelism: 1
+        delay: 10s
+
+  cron:
+    image: github.com/diaohaha/termite:20200109_02_gd
+    env_file:
+      - env
+    networks:
+      - infra
+    hostname: "{{.Service.Name}}-{{.Task.Slot}}"
+    environment:
+      - _TIMEZONE=${CI_ENVIRONMENT_TIMEZONE:-Asia/Shanghai}
+      - SERVICE_NAME={{.Service.Name}}
+      - INSTANCE_ID={{.Task.Slot}}
+      - SERVICE_TYPE=MAIN
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/service_data:/data/service/data:rw"
+      - "/data/logs:/data/service/logs:rw"
+    command:
+      - startup
+      - "./termite_cron"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      update_config:
+        order: stop-first
+        parallelism: 1
+        delay: 1s
+
+  dag_scheduler:
+    image: github.com/diaohaha/termite:20200109_02_gd
+    env_file:
+      - env
+    networks:
+      - infra
+    hostname: "{{.Service.Name}}-{{.Task.Slot}}"
+    environment:
+      - _TIMEZONE=${CI_ENVIRONMENT_TIMEZONE:-Asia/Shanghai}
+      - SERVICE_NAME={{.Service.Name}}
+      - INSTANCE_ID={{.Task.Slot}}
+      - SERVICE_TYPE=MAIN
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/service_data:/data/service/data:rw"
+      - "/data/logs:/data/service/logs:rw"
+    command:
+      - startup
+      - "./termite_scheduler dag"
+    deploy:
+      mode: replicated
+      replicas: 2
+      restart_policy:
+        condition: any
+      update_config:
+        order: stop-first
+        parallelism: 1
+        delay: 1s
+
+  delay_scheduler:
+    image: github.com/diaohaha/termite:20200109_02_gd
+    env_file:
+      - env
+    networks:
+      - infra
+    hostname: "{{.Service.Name}}-{{.Task.Slot}}"
+    environment:
+      - _TIMEZONE=${CI_ENVIRONMENT_TIMEZONE:-Asia/Shanghai}
+      - SERVICE_NAME={{.Service.Name}}
+      - INSTANCE_ID={{.Task.Slot}}
+      - SERVICE_TYPE=MAIN
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/service_data:/data/service/data:rw"
+      - "/data/logs:/data/service/logs:rw"
+    command:
+      - startup
+      - "./termite_scheduler delay"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      update_config:
+        order: stop-first
+        parallelism: 1
+        delay: 1s
+
+  align_scheduler:
+    image: github.com/diaohaha/termite:20200109_02_gd
+    env_file:
+      - env
+    networks:
+      - infra
+    hostname: "{{.Service.Name}}-{{.Task.Slot}}"
+    environment:
+      - _TIMEZONE=${CI_ENVIRONMENT_TIMEZONE:-Asia/Shanghai}
+      - SERVICE_NAME={{.Service.Name}}
+      - INSTANCE_ID={{.Task.Slot}}
+      - SERVICE_TYPE=MAIN
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/data/service_data:/data/service/data:rw"
+      - "/data/logs:/data/service/logs:rw"
+    command:
+      - startup
+      - "./termite_scheduler align"
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: any
+      update_config:
+        order: stop-first
+        parallelism: 1
+        delay: 1s
+
+networks:
+  infra:
+    external: true
+  hostnet:
+    external: true
+    name: host

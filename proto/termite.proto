@@ -1,0 +1,150 @@
+syntax = "proto3";
+
+service Termite {
+	rpc AddWorkFlow(AddWorkFlowRequest) returns (AddWorkFlowResponse) {}
+    rpc FinishWorkFlow(FinishWorkFlowRequest) returns (FinishWorkFlowResponse) {}
+    rpc RecoverWorkFlow(RecoverWorkFlowRequest) returns (RecoverWorkFlowResponse) {}
+    rpc GetWorkFlowContext(GetWorkFlowContextRequest) returns (GetWorkFlowContextResponse) {}
+    rpc SetWorkFlowContext(SetWorkFlowContextRequest) returns (SetWorkFlowContextResponse) {}
+
+    rpc WorkStart(WorkStartRequest) returns (WorkStartResponse) {}
+    rpc WorkFinish(WorkFinishRequest) returns (WorkFinishResponse) {}
+    rpc WorkError(WorkErrorRequest) returns (WorkErrorResponse) {}
+    rpc WorkDelay(WorkDelayRequest) returns (WorkDelayResponse) {}
+
+    // query
+    rpc QueryWorkFlow(QueryWorkFlowRequest) returns (QueryWorkFlowResponse) {}
+    rpc QueryWork(QueryWorkRequest) returns (QueryWorkResponse) {}
+}
+
+
+// 添加工作流任务
+message AddWorkFlowRequest {
+    string workflow_key = 1;
+    string project = 2;
+    map<string, string> env = 3;
+    string cid = 4;
+}
+
+message AddWorkFlowResponse {
+    int64 code = 1;
+    string message = 2;
+}
+
+// 修复/重置 工作流
+message RecoverWorkFlowRequest {
+    int64 flow_id = 1;
+}
+
+message RecoverWorkFlowResponse {
+    int64 code = 1;
+    string message = 2;
+}
+
+// 添加工作流上下文
+message SetWorkFlowContextRequest {
+    int64 flow_id = 1;
+    map<string, string> context = 2;
+}
+
+message SetWorkFlowContextResponse {
+    int64 code = 1;
+    string message = 2;
+}
+
+// 查询工作流上下文
+message GetWorkFlowContextRequest {
+    int64 flow_id = 1;
+}
+
+message GetWorkFlowContextResponse {
+    int64 code = 1;
+    string message = 2;
+    map<string, string> context = 3;
+}
+
+// 查询工作通过cid vflow vwork
+message WorkResult {
+    string cid = 1;
+    int64 work_id = 2;
+    int64 work_state = 3;
+}
+
+message QueryWorkRequest {
+    string workflow_key = 1;
+    string work_key = 2;
+    string cid = 3;
+}
+
+message QueryWorkResponse {
+    repeated WorkResult works = 1;
+    int64 code = 2;
+    string message = 3;
+}
+
+// 查询工作流通过cid vflow
+message QueryWorkFlowRequest {
+    string workflow_key = 1;
+    string cid = 2;
+}
+
+message QueryWorkFlowResponse {
+    int64 flow_id = 1;
+    int64 code = 2;
+    string message = 3;
+}
+
+
+// 工作流结束
+message FinishWorkFlowRequest {
+    int64 flow_id = 1;
+}
+
+message FinishWorkFlowResponse {
+    int64 code = 1;
+    string message = 2;
+}
+
+// 工作开始
+message WorkStartRequest {
+	int64 work_id = 1;
+}
+
+message WorkStartResponse {
+    int64 code = 1;
+    string message = 2;
+}
+
+// 工作结束
+message WorkFinishRequest {
+    int64 work_id = 1;
+    string result = 2;
+    string output = 3;
+}
+
+message WorkFinishResponse {
+    int64 code = 1;
+    string message = 2;
+}
+
+// 工作异常
+message WorkErrorRequest {
+    int64 work_id = 1;
+    string error = 2;
+}
+
+message WorkErrorResponse {
+    int64 code = 1;
+    string message = 2;
+}
+
+// 工作延迟
+message WorkDelayRequest {
+    int64 work_id = 1;
+    int64 delay_seconds = 2;
+}
+
+message WorkDelayResponse {
+    int64 code = 1;
+    string message = 2;
+}
